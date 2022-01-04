@@ -5,6 +5,9 @@ import {
   onSnapshot,
   setDoc,
   deleteDoc,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
@@ -93,6 +96,26 @@ function App() {
     await deleteDoc(docRef);
   };
 
+  const handleDeleteSameName = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    const name = nameRef.current?.value;
+    if (name) {
+      const collectionRef = collection(db, "colors");
+      const q = query(collectionRef, where("name", "==", name));
+
+      const snapshot = await getDocs(q);
+      const docIds = snapshot.docs.map((doc) => doc.id);
+
+      docIds.forEach(async (id) => {
+        const docRef = doc(db, "colors", id);
+        await deleteDoc(docRef);
+      });
+    }
+  };
+
   return (
     <div className="App">
       <form action="post">
@@ -107,6 +130,12 @@ function App() {
         <div className="box">
           <button type="submit" onClick={handleCreate}>
             Add
+          </button>
+        </div>
+
+        <div className="box">
+          <button type="submit" onClick={handleDeleteSameName}>
+            delete same name
           </button>
         </div>
       </form>
