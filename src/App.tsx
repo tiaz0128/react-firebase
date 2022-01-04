@@ -1,5 +1,5 @@
-import { collection, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import db from "./firebase";
 
@@ -34,6 +34,9 @@ interface Colors {
 function App() {
   const [colors, setColors] = useState<Colors[]>();
 
+  const nameRef = useRef<HTMLInputElement>(null);
+  const colorRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     onSnapshot(collection(db, "colors"), (snapshot) => {
       setColors(
@@ -42,16 +45,40 @@ function App() {
     });
   }, []);
 
+  const handleCreate = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    const collectionRef = collection(db, "colors");
+    const payload = {
+      name: nameRef.current?.value,
+      color: colorRef.current?.value,
+    };
+
+    try {
+      await addDoc(collectionRef, payload);
+    } catch {
+      alert("Error");
+    }
+  };
+
   return (
     <div className="App">
-      <div className="box">
-        <label htmlFor="">name</label>
-        <input type="text" />
-      </div>
-      <div className="box">
-        <label htmlFor="">color</label>
-        <input type="text" />
-      </div>
+      <form action="post">
+        <div className="box">
+          <label htmlFor="">name</label>
+          <input name="name" ref={nameRef} />
+        </div>
+        <div className="box">
+          <label htmlFor="">color</label>
+          <input name="color" ref={colorRef} />
+        </div>
+        <div className="box">
+          <button type="submit" onClick={handleCreate}>
+            Add
+          </button>
+        </div>
+      </form>
       <ul>
         {colors?.map((color) => (
           <Color key={color.id} {...color} />
