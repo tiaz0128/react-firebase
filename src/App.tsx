@@ -1,4 +1,11 @@
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import db from "./firebase";
@@ -14,10 +21,17 @@ const Dot = ({ color }: { color: string }) => {
   return <span style={style} />;
 };
 
-const Color = ({ name, color }: Colors) => {
+const Color = ({
+  colorPros,
+  handleEdit,
+}: {
+  colorPros: Colors;
+  handleEdit: (id: string) => void;
+}) => {
+  const { id, name, color } = colorPros;
   return (
     <li>
-      <button>edit</button>
+      <button onClick={() => handleEdit(id)}>edit</button>
       <Dot color={color} />
       <span>{name}</span>
       <button>del</button>
@@ -62,6 +76,16 @@ function App() {
     }
   };
 
+  const handleEdit = async (id: string) => {
+    const docRef = doc(db, "colors", id);
+    const payload = {
+      name: nameRef.current?.value,
+      color: colorRef.current?.value,
+    };
+
+    await setDoc(docRef, payload);
+  };
+
   return (
     <div className="App">
       <form action="post">
@@ -81,7 +105,7 @@ function App() {
       </form>
       <ul>
         {colors?.map((color) => (
-          <Color key={color.id} {...color} />
+          <Color key={color.id} colorPros={color} handleEdit={handleEdit} />
         ))}
       </ul>
     </div>
