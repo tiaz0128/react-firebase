@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+
+const Dot = ({ color }: { color: string }) => {
+  const style = {
+    height: 25,
+    width: 25,
+    display: "inline-block",
+    backgroundColor: color,
+  };
+
+  return <span style={style} />;
+};
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="box">
+        <label htmlFor="">name</label>
+        <input type="text" />
+      </div>
+      <div className="box">
+        <label htmlFor="">color</label>
+        <input type="text" />
+      </div>
+      <ul>
+        <li>
+          <button>edit</button>
+          <Dot color={"#000"} />
+          <span>black</span>
+          <button>del</button>
+        </li>
+      </ul>
     </div>
   );
 }
