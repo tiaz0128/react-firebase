@@ -24,9 +24,11 @@ const Dot = ({ color }: { color: string }) => {
 const Color = ({
   colorPros,
   handleEdit,
+  handleDelete,
 }: {
   colorPros: Colors;
   handleEdit: (id: string) => void;
+  handleDelete: (id: string) => void;
 }) => {
   const { id, name, color } = colorPros;
   return (
@@ -34,7 +36,7 @@ const Color = ({
       <button onClick={() => handleEdit(id)}>edit</button>
       <Dot color={color} />
       <span>{name}</span>
-      <button>del</button>
+      <button onClick={() => handleDelete(id)}>del</button>
     </li>
   );
 };
@@ -86,6 +88,11 @@ function App() {
     await setDoc(docRef, payload);
   };
 
+  const handleDelete = async (id: string) => {
+    const docRef = doc(db, "colors", id);
+    await deleteDoc(docRef);
+  };
+
   return (
     <div className="App">
       <form action="post">
@@ -105,7 +112,12 @@ function App() {
       </form>
       <ul>
         {colors?.map((color) => (
-          <Color key={color.id} colorPros={color} handleEdit={handleEdit} />
+          <Color
+            key={color.id}
+            colorPros={color}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+          />
         ))}
       </ul>
     </div>
